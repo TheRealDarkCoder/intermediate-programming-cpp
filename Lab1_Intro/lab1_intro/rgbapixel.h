@@ -7,6 +7,8 @@
  * @date Created: Spring 2012
  * @date Modified: Spring 2025
  */
+#ifndef RGBAPIXEL_H
+#define RGBAPIXEL_H
 
 #include <stdint.h>
 #include <cstdint>
@@ -26,3 +28,5 @@ public:
     RGBAPixel();
     RGBAPixel(uint8_t _r, uint8_t _g, uint8_t _b);
 };
+
+#endif
