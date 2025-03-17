@@ -9,6 +9,8 @@
  */
 
 #include <stdint.h>
+#include <cstdint>
+using std::uint8_t;
 
 // Your code here
 
