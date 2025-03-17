@@ -58,7 +58,26 @@ void brighten(PNG & original, int amount)
     {
       for (size_t xi = 0; xi < original.width(); xi++){
 	      // Your code here
-
+        // Handle overflow for red component
+        if (255 - original(xi, yi).red < amount) {
+            original(xi, yi).red = 255; // Set to maximum value to avoid overflow
+        } else {
+            original(xi, yi).red += amount;
+        }
+        
+        // Handle overflow for green component
+        if (255 - original(xi, yi).green < amount) {
+            original(xi, yi).green = 255; // Set to maximum value to avoid overflow
+        } else {
+            original(xi, yi).green += amount;
+        }
+        
+        // Handle overflow for blue component
+        if (255 - original(xi, yi).blue < amount) {
+            original(xi, yi).blue = 255; // Set to maximum value to avoid overflow
+        } else {
+            original(xi, yi).blue += amount;
+        }
       }
     }
 }
@@ -81,7 +100,16 @@ void blendImages(PNG & firstImage, const PNG & secondImage)
     {
       for (size_t xi = 0; xi < std::min(firstImage.width(), secondImage.width()); xi++){
 	      // Your code here
+        // Calculate the average of red components
+        firstImage(xi, yi).red = (firstImage(xi, yi).red + secondImage(xi, yi).red) / 2;
+        
+        // Calculate the average of green components
+        firstImage(xi, yi).green = (firstImage(xi, yi).green + secondImage(xi, yi).green) / 2;
+        
+        // Calculate the average of blue components
+        firstImage(xi, yi).blue = (firstImage(xi, yi).blue + secondImage(xi, yi).blue) / 2;
 
+        // Alpha Channel ignored
       }
     }
 }
