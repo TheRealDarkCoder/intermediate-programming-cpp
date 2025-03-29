@@ -29,8 +29,9 @@ Allocator::Allocator(const std::string & studentFile, const std::string & roomFi
 
 Allocator::~Allocator()
 {
-  delete &alphabet;
+  // delete &alphabet;
 }
+
 
 /**
  * Allocates the vector of letters
@@ -69,16 +70,17 @@ void Allocator::loadRooms(const std::string & file)
 {
 	// Read in rooms
 	fileio::loadRooms(file);
-	rooms.resize(fileio::getNumRooms(), Room());
-
+	rooms.clear();
 	totalCapacity = 0;
-	int i = 0;
+
 	while (fileio::areMoreRooms())
 	{
-	        i++;
-		rooms[i] = fileio::nextRoom();
-		totalCapacity += rooms[i].getCapacity();
+		Room newRoom = fileio::nextRoom();
+    rooms.push_back(newRoom);  // Store rooms properly instead of overwriting
+    totalCapacity += newRoom.getCapacity();
 	}
+
+	roomCount = rooms.size();  // Ensure correct count
 }
 
 void Allocator::printStudents()
@@ -126,7 +128,7 @@ int Allocator::solve()
 	
 	for (int L = 0; L < 26; L++)
 	{
-		Room r = largestOpening();
+		Room& r = largestOpening();
 		r.addLetter(alphabet[L]);
 	}
 	

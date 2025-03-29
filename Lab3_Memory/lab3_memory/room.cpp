@@ -15,8 +15,8 @@
  * Creates a blank (uninitialized) room
  */
 Room::Room()
-    : name("-"), capacity(0)
-{
+    : name("-"), capacity(0), total_students_in_Room(0),
+      count_letters_allocated_to_Room(0), letters(new Letter[26]){
 }
 
 /**
@@ -24,14 +24,14 @@ Room::Room()
  * Creates an empty room with the given name and capacity
  */
 Room::Room(const std::string & init_name, int init_capacity)
-	: name(init_name), capacity(init_capacity)
-{
+	: name(init_name), capacity(init_capacity), total_students_in_Room(0),
+      count_letters_allocated_to_Room(0), letters(new Letter[26]){
 }
 
 /**
  * Room copy constructor
  */
-Room::Room(const Room & other): name(other.name), capacity(other.capacity)
+Room::Room(const Room & other): name(other.name), capacity(other.capacity), letters(new Letter[26])
 {
 	copy(other);
 }
@@ -101,6 +101,7 @@ int Room::getCapacity() const
 void Room::clear()
 {
     delete [] letters;
+    letters = nullptr;
     count_letters_allocated_to_Room = 0;
     total_students_in_Room = 0;
 }
@@ -112,6 +113,10 @@ void Room::copy(const Room & other)
 {
 	total_students_in_Room = other.total_students_in_Room;
 	count_letters_allocated_to_Room = other.count_letters_allocated_to_Room;
-	letters = other.letters;
+	// letters = other.letters;
+	for (int i = 0; i < count_letters_allocated_to_Room; i++) {
+	  letters[i] = other.letters[i];
+	}
+	
 }
 
