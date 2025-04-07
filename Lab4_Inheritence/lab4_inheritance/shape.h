@@ -38,7 +38,7 @@ class Shape : public Drawable
 		 */
 		Shape(const Vector2& center, const RGBAPixel& color);
 
-		~Shape() { /* Nothing */ }
+		virtual ~Shape() { /* Nothing */ }
 
 		/**
 		 * @brief Computes and returns the area of the Shape in pixels
