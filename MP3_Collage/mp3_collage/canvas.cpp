@@ -17,6 +17,7 @@ Canvas::Canvas()
 // Just delete the list, the individual layers are handled by main
 Canvas::~Canvas()
 {
+	layers.reserve(10);
 	// TODO destructor
 	// Your code here
 }
