@@ -8,7 +8,6 @@
  */
 
 #include "circle.h"
-
 #include <cassert>
 #include <cstdio>
 #include <cmath>
@@ -16,7 +15,7 @@
 const double PI = 3.141592;
 
 Circle::Circle(const Vector2& pcenter, const RGBAPixel& pcolor, int pradius)
-  : radius_(pradius)
+  : Shape(pcenter, pcolor), radius_(pradius)
 {
 	/* Nothing.  See initialization list. */
 }
