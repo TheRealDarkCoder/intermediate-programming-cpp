@@ -7,9 +7,11 @@
 
 #include "canvas.h"
 #include <iostream>
+#include <algorithm>
 
 Canvas::Canvas()
 {
+	layers.reserve(10);
 	// TODO constructor
 	// Your code here
 }
@@ -17,7 +19,7 @@ Canvas::Canvas()
 // Just delete the list, the individual layers are handled by main
 Canvas::~Canvas()
 {
-	layers.reserve(10);
+	layers.clear();
 	// TODO destructor
 	// Your code here
 }
@@ -27,8 +29,8 @@ void Canvas::Add(size_t x, size_t y, const Vector2& pos, const Vector2& scale, c
 {
 	// TODO instead of a single layer, have a list
 	// Replace the code here
-        layers = new PNGLayer(x,y,pos,scale,col,name);
-        layercount = 1;  
+    auto newLayer = std::make_unique<PNGLayer>(x, y, pos, scale, col, name);
+	layers.push_back(std::move(newLayer));
 }
 
 // Get the latest layer added to the canvas
@@ -36,7 +38,7 @@ void Canvas::Add(size_t x, size_t y, const Vector2& pos, const Vector2& scale, c
 PNGLayer & Canvas::GetTopLayer(){
 	// TODO instead of a single layer,
 	// Return the latest/top layer from the list
-	return layers[0];
+	return *layers.back();
 }
 
 // Get a layer by its name
@@ -45,7 +47,13 @@ PNGLayer& Canvas::GetByName(const std::string& name){
 	// TODO instead of a single layer,
 	// Return the layer with matching name
 	// Report an error if it doesn't exist
-	return layers[0];
+	for (auto& layerPtr : layers) {
+		if (layerPtr->getName() == name) {
+			return *layerPtr;
+		}
+	}
+
+	throw std::runtime_error("Layer not found: " + name);
 }
 
 // Find and remove layer by name
@@ -55,6 +63,14 @@ void Canvas::Remove(const std::string& name)
 	// TODO instead of a single layer, should work for a list
 	// This removes the frame for the logo in the collage
 	// Your code here
+	for (auto it = layers.begin(); it != layers.end(); ++it) {
+		const PNGLayer& layer = **it;
+
+		if (layer.getName() == name) {
+            layers.erase(it);
+            return;
+        }
+	}
 }
 
 // Find given layers from list and swap their positions
@@ -63,6 +79,24 @@ void Canvas::Swap(const std::string& name1, const std::string& name2)
 {
 	// TODO needed for collage so the frames can be drawn before images
 	// Your code here
+	auto it1 = layers.end();
+    auto it2 = layers.end();
+    
+    for (auto it = layers.begin(); it != layers.end(); ++it) {
+        if ((*it)->getName() == name1) {
+            it1 = it;
+        } else if ((*it)->getName() == name2) {
+            it2 = it;
+        }
+
+        if (it1 != layers.end() && it2 != layers.end()) {
+            break;
+        }
+    }
+
+    if (it1 != layers.end() && it2 != layers.end()) {
+        std::swap(*it1, *it2);
+    }
 }
 
 // Draws all layers in the list in order
@@ -71,16 +105,17 @@ void Canvas::Swap(const std::string& name1, const std::string& name2)
 // Blends drawn layers based on alpha channel (transparency)
 void Canvas::draw(PNG& canvas) const
 {
-	for(size_t i=0; i<layercount; i++) {
+	for (const auto& layerPtr : layers) {
 		//update this line
-		PNGLayer& layer = layers[0];
+		const PNGLayer& layer = *layerPtr;
+		Vector2 sc = layer.getScale();
+		Vector2 pos = layer.getPosition();
 		
 		for(size_t x=0, xmax = layer.width(); x<xmax; x++){
 			for(size_t y=0, ymax = layer.height(); y<ymax; y++){
 				// This gets the pixel color blended with layer color
 				// Check pnglayer.cpp
 				RGBAPixel coli = layer.getBlendedPixel(x,y);
-				Vector2 sc = layer.getScale();
 				
 				// TODO You should uncomment the below line and use in the section below
 				// Vector2 pos = layer.getPosition();
@@ -96,14 +131,15 @@ void Canvas::draw(PNG& canvas) const
 						// Multiply x and y by layer scale
 						
 						// Modify the two lines below
-						int x1 = x;
-						int y1 = y;
+						int x1 = static_cast<int>(x * sc.x() + pos.x() + xs);
+						int y1 = static_cast<int>(y * sc.y() + pos.y() + ys);
 					  
 						// Check that it's within bounds
 						if(x1 >= 0 && x1 < (int)canvas.width() && y1 >= 0 && y1 < (int)canvas.height()) {
 							// Current color of the canvas
 							RGBAPixel& colc = canvas(x1,y1);
-														
+							unsigned char alpha = coli.alpha;
+							
 							// TODO Blend based on alpha.
 							// Multiply layer color with alpha, canvas color with 255-alpha
 							// Add them and divide by 255
@@ -111,9 +147,9 @@ void Canvas::draw(PNG& canvas) const
 							// 1-254 = partly new pixel, partly old
 							
 							// Modify the three lines below
-							colc.red = coli.red;
-							colc.green = coli.green;
-							colc.blue = coli.blue;
+							colc.red   = (colc.red   * (255 - alpha) + coli.red   * alpha) / 255;
+							colc.green = (colc.green * (255 - alpha) + coli.green * alpha) / 255;
+							colc.blue  = (colc.blue  * (255 - alpha) + coli.blue  * alpha) / 255;
 
 							// We can keep the canvas opaque, no reason to change it
 							colc.alpha = 255;

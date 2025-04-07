@@ -18,11 +18,14 @@ class PNGLayer : public PNG
 	public:
 		// x and y here represent size in pixels
 		PNGLayer(size_t x, size_t y, const Vector2& pos, const Vector2& scale, const RGBAPixel& col, const std::string& name);
-		PNGLayer() {}
+		~PNGLayer() { }
 		const Vector2& getPosition() const;
 		const Vector2& getScale() const;
 		RGBAPixel getBlendedPixel(size_t x, size_t y) const;
 		void SetPosition(const Vector2& pos);
+		const std::string& getName() const {
+			return name_;
+		}
 	private:
 		Vector2 position_;
 		Vector2 scale_;

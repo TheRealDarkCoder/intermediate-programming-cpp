@@ -12,6 +12,15 @@ PNGLayer::PNGLayer(size_t x, size_t y, const Vector2& position, const Vector2& s
 	resize(x, y);
 	// TODO Initialize the pixels transparent so when drawing shapes, the background is transparent
 	// Your code here
+	for (size_t i = 0; i < x; ++i) {
+        for (size_t j = 0; j < y; ++j) {
+            RGBAPixel& pixel = (*this)(i, j);
+            pixel.red = 255;    // Full intensity red
+            pixel.green = 255;  // Full intensity green
+            pixel.blue = 255;   // Full intensity blue
+            pixel.alpha = 0;    // Fully transparent
+        }
+    }
 }
 
 RGBAPixel PNGLayer::getBlendedPixel(size_t x, size_t y) const{
@@ -23,6 +32,10 @@ RGBAPixel PNGLayer::getBlendedPixel(size_t x, size_t y) const{
 	// This way the color can be easily changed later
 	
 	// Your code here
+	copy.red = static_cast<unsigned char>((copy.red * color_.red) / 255);
+    copy.green = static_cast<unsigned char>((copy.green * color_.green) / 255);
+    copy.blue = static_cast<unsigned char>((copy.blue * color_.blue) / 255);
+    copy.alpha = static_cast<unsigned char>((copy.alpha * color_.alpha) / 255);
 	return copy;
 }
 
