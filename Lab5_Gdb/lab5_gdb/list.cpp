@@ -115,18 +115,14 @@ template <class T>
 typename List<T>::ListNode* List<T>::reverse(ListNode* curr, ListNode* prev, int len)
 {
     // @todo Graded in lab_gdb
-    ListNode * temp;
-    if (len <= 0)
-    {
-        curr->next = prev;
-        return curr;
-    }
-    else
-    {
-        temp = reverse(curr->next, curr, len-1);
-        curr->next = prev;
-        return temp;
-    }
+    if (curr == nullptr)
+      return prev;
+
+    ListNode* next = curr->next;
+
+    curr->next = prev;
+
+    return reverse(next, curr, len - 1);
 }
 
 /**
