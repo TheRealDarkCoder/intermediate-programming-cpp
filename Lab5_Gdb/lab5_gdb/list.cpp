@@ -52,6 +52,10 @@ template <class T>
 void List<T>::insertFront(T const & ndata)
 {
     // @todo Graded in lab_gdb
+    ListNode* newNode = new ListNode(ndata);
+    newNode->next = head;
+    head = newNode;
+    length++;
 }
 
 /**
