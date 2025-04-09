@@ -40,6 +40,15 @@ template <class T>
 void List<T>::clear()
 {
     // @todo Graded in lab_gdb
+    ListNode* current = head;
+    while (current != nullptr)
+    {
+        ListNode* nextNode = current->next;
+        delete current;
+        current = nextNode;
+    }
+    head = nullptr;
+    length = 0;
 }
 
 /**
