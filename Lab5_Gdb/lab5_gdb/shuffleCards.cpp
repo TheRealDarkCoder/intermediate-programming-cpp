@@ -35,17 +35,18 @@ void shuffleCards(){
 	// and then to arrange them on the output canvas in the shuffled order.
 	
 	// TODO, update the lines below as needed. Currently, the code works for one layer(card) only.
-	
-	// Each card layer should be defined as a sample layer below.
-	// No need to reposition the cards yet, as we will need to shuffle them first.
-	PNGLayer p(WIDTH, HEIGHT, Vector2(0.0, 0.0), Vector2(1.0, 1.0), RGBAPixel(255,255,255,255),"1");
+	for (int i = num_cards; i >= 1; i--) {
+		// Each card layer should be defined as a sample layer below.
+		// No need to reposition the cards yet, as we will need to shuffle them first.
+		PNGLayer p(WIDTH, HEIGHT, Vector2(0.0, 0.0), Vector2(1.0, 1.0), RGBAPixel(255,255,255,255), std::to_string(i));
 		
-	// Read each layer from the corresponging image file
-	p.readFromFile(INPUT_FILE + "1.png");
+		// Read each layer from the corresponging image file
+		p.readFromFile(INPUT_FILE + std::to_string(i) + ".png");
 
-	// Place the layers in the list
-	list.insertFront(p);
-
+		// Place the layers in the list
+		list.insertFront(p);
+	}
+	
 	// Now shuffle the layers
 	// You MUST use the shuffle function from the List class (our Autograder will check for it)
 	list.shuffle();
@@ -56,11 +57,17 @@ void shuffleCards(){
 	// index should start with 0 to go up to the size of the list according to the shuffle function
 	// This ist the way the layers should be ordered in the Canvas object.
 	// Set up the position of each layer according to index and dimensions
-	p.SetPosition(Vector2(WIDTH/100 + (WIDTH-WIDTH/9)/num_cards * index, HEIGHT/4));
+	List<PNGLayer>::ListIterator it = list.begin();
+	while (it != list.end()) {
+			PNGLayer currentLayer = *it;
+			currentLayer.SetPosition(Vector2(WIDTH/100 + (WIDTH-WIDTH/9)/num_cards * index, HEIGHT/4));
 	
-	//Add layers to the canvas
-	outputCanvas.Add(p);
-	
+			//Add layers to the canvas
+			outputCanvas.Add(currentLayer);
+
+			++it;
+			index++;
+	}
 	// Draw the canvas with properly shuffled layers on the final PNG object.
 	// This needs to be done just once after all the layers are added.
 	outputCanvas.draw(out);
