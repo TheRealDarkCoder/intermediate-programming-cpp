@@ -137,4 +137,71 @@ template <class T>
 void List<T>::shuffle()
 {
     // @todo Graded in lab_gdb
+    if (head == nullptr || head->next == nullptr) {
+        return;
+    }
+
+    ListNode* slow = head;
+    ListNode* fast = head;
+    ListNode* prev = nullptr;  
+    
+    while (fast != nullptr && fast->next != nullptr) {
+        prev = slow;
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    
+    
+    ListNode* secondHalf = slow;  
+    if (prev != nullptr) {
+        prev->next = nullptr;  
+    }
+    
+    
+    ListNode* firstHalf = head;
+    ListNode* result = nullptr;  
+    ListNode* tail = nullptr;    
+    
+    
+    if (firstHalf != nullptr && firstHalf->next == nullptr && secondHalf != nullptr) {
+        head->next = secondHalf;
+        secondHalf->next = nullptr;
+        return;
+    }
+    
+    
+    bool useFirst = true;  
+    
+    while (firstHalf != nullptr && secondHalf != nullptr) {
+        ListNode* next;
+        
+        if (useFirst) {
+            next = firstHalf;
+            firstHalf = firstHalf->next;
+        } else {
+            next = secondHalf;
+            secondHalf = secondHalf->next;
+        }
+        
+        if (result == nullptr) {
+            result = next;  
+            tail = next;
+        } else {
+            tail->next = next;
+            tail = next;
+        }
+        
+        useFirst = !useFirst;  
+    }
+    
+    
+    if (firstHalf != nullptr) {
+        tail->next = firstHalf;
+    } else if (secondHalf != nullptr) {
+        tail->next = secondHalf;
+    } else {
+        tail->next = nullptr;  
+    }
+    
+    head = result;
 }
