@@ -7,13 +7,26 @@
  */
 
 #include "anagram_dict.h"
-
 #include <algorithm> /* I wonder why this is included... */
 #include <fstream>
 
 using std::string;
 using std::vector;
 using std::ifstream;
+
+string get_sorted_string(const string& word) {
+    string sorted = word;
+    std::sort(sorted.begin(), sorted.end());
+    return sorted;
+}
+
+
+string trim(const string& str) {
+    size_t first = str.find_first_not_of(" \t\r\n");
+    if (first == string::npos) return "";
+    size_t last = str.find_last_not_of(" \t\r\n");
+    return str.substr(first, last - first + 1);
+}
 
 /** 
  * Constructs an AnagramDict from a filename with newline-separated
@@ -23,6 +36,20 @@ using std::ifstream;
 AnagramDict::AnagramDict(const string& filename)
 {
     /* Your code goes here! */
+    ifstream words(filename);
+    string word;
+    
+    if (words.is_open()) {
+        while (getline(words, word)) {
+            word = trim(word);
+            if (word.empty()) continue;         
+            string sorted = get_sorted_string(word);
+            
+            dict[sorted].push_back(word);
+
+        }
+    }
+    
 }
 
 /** 
@@ -32,6 +59,14 @@ AnagramDict::AnagramDict(const string& filename)
 AnagramDict::AnagramDict(const vector< string >& words)
 {
     /* Your code goes here! */
+    for (const string& word : words) {
+        
+        if (word.empty()) continue;
+        
+        string sorted = get_sorted_string(word);
+        
+        dict[sorted].push_back(word);
+    }
 }
 
 /**
@@ -43,6 +78,13 @@ AnagramDict::AnagramDict(const vector< string >& words)
 vector< string > AnagramDict::get_anagrams(const string& word) const
 {
     /* Your code goes here! */
+    string sorted = get_sorted_string(word);
+    auto it = dict.find(sorted);
+    
+    if (it != dict.end()) {
+        return it->second;
+    }
+    
     return vector< string >();
 }       
 
@@ -55,7 +97,13 @@ vector< string > AnagramDict::get_anagrams(const string& word) const
 vector< vector< string > > AnagramDict::get_all_anagrams() const
 {
     /* Your code goes here! */
-    return vector< vector < string > >();
+    vector<vector<string>> result;
+    for (const auto& entry : dict) {
+      if (entry.second.size() >= 2) {
+            result.push_back(entry.second);                
+      }
+    }
+    return result;
 }
 
 
