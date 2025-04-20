@@ -78,5 +78,33 @@ PronounceDict::PronounceDict(const unordered_map< string, vector< string > >&
 bool PronounceDict::homophones(const string& word1, const string& word2) const
 {
     /* Your code goes here! */
+    string word1_upper = word1;
+    string word2_upper = word2;
+    
+    std::transform(word1_upper.begin(), word1_upper.end(), word1_upper.begin(), ::toupper);
+    std::transform(word2_upper.begin(), word2_upper.end(), word2_upper.begin(), ::toupper);
+    
+    
+    auto word1_it = dict.find(word1_upper);
+    auto word2_it = dict.find(word2_upper);
+    
+    if (word1_it == dict.end() || word2_it == dict.end()) {
+        return false;
+    }
+    
+    
+    const vector<string>& pronunciation1 = word1_it->second;
+    const vector<string>& pronunciation2 = word2_it->second;
+    
+    
+    if (pronunciation1.size() != pronunciation2.size()) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < pronunciation1.size(); i++) {
+        if (pronunciation1[i] != pronunciation2[i]) {
+            return false;
+        }
+    }
     return true;
 }
