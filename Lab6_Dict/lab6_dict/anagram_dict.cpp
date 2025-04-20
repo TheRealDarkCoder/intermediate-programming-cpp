@@ -44,9 +44,10 @@ AnagramDict::AnagramDict(const string& filename)
             word = trim(word);
             if (word.empty()) continue;         
             string sorted = get_sorted_string(word);
-            
-            dict[sorted].push_back(word);
 
+            if (std::find(dict[sorted].begin(), dict[sorted].end(), word) == dict[sorted].end()) {
+                dict[sorted].push_back(word);
+            }
         }
     }
     
@@ -64,8 +65,10 @@ AnagramDict::AnagramDict(const vector< string >& words)
         if (word.empty()) continue;
         
         string sorted = get_sorted_string(word);
-        
-        dict[sorted].push_back(word);
+
+        if (std::find(dict[sorted].begin(), dict[sorted].end(), word) == dict[sorted].end()) {
+            dict[sorted].push_back(word);
+        }
     }
 }
 
