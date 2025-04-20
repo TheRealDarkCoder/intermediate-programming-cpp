@@ -54,12 +54,8 @@ void CommonWords::init_common()
     for (auto& file_map : file_word_maps) {
       for (auto& word_pair : file_map) {
             string word = word_pair.first;
-            if (common.find(word) == common.end()) {
-                common[word] = 1; 
-            } else {
-                common[word]++; 
-            }
-        }
+            common[word]++; 
+      }
     }
 }
 
@@ -79,20 +75,7 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
         vector<string> words = file_to_vector(filenames[i]);
         /* Your code goes here! */
         for (const string& word : words) {
-            string lower_word = word;
-            transform(lower_word.begin(), lower_word.end(), lower_word.begin(), ::tolower);
-            
-            
-            if (lower_word.empty()) {
-                continue;
-            }
-            
-            
-            if (file_word_maps[i].find(lower_word) == file_word_maps[i].end()) {
-                file_word_maps[i][lower_word] = 1; 
-            } else {
-                file_word_maps[i][lower_word]++; 
-            }
+            file_word_maps[i][word]++; 
         }
     }
 }
@@ -108,28 +91,20 @@ vector< string > CommonWords::get_common_words(unsigned int n) const
     /* Your code goes here! */
     vector<string> out;
 
-    size_t num_files = file_word_maps.size();
-    
-    
-    for (const auto& word_pair : common) {
-        string word = word_pair.first;
-        unsigned int file_count = word_pair.second;
-        
-        
-        if (file_count == num_files) {
-            bool appears_n_times = true;
+    for (const auto& pair : common) {
+        const string& word = pair.first;
+
+        // Only check words that appear in all files
+        if (pair.second == file_word_maps.size()) {
+            bool in_all = true;
             for (const auto& file_map : file_word_maps) {
-                
                 auto it = file_map.find(word);
-                
                 if (it == file_map.end() || it->second < n) {
-                    appears_n_times = false;
+                    in_all = false;
                     break;
                 }
             }
-            
-            
-            if (appears_n_times) {
+            if (in_all) {
                 out.push_back(word);
             }
         }
