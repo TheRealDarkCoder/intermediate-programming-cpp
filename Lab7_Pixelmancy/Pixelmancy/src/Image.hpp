@@ -17,6 +17,9 @@ public:
     Image(const Image& other);
     Image(Image&& other) noexcept;
 
+    Image& operator=(Image&& other) noexcept;
+
+
     ~Image() = default;
 
     bool isEmpty() const;

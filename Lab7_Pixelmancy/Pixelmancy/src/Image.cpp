@@ -12,28 +12,28 @@ Image Image::mergeImages(const Image& firstImage, const Image& secondImag)
 {
     if (firstImage.isEmpty() && secondImag.isEmpty())
     {
-        return *(new Image(0, 0));
+        return Image(0, 0);
     }
     if (firstImage.isEmpty())
     {
-        return *(new Image(secondImag));
+        return Image(secondImag);
     }
     if (secondImag.isEmpty())
     {
-        return *(new Image(firstImage));
+        return Image(firstImage);
     }
 
     auto maxWidth = std::max(firstImage.getWidth(), secondImag.getWidth());
     auto maxHeight = std::max(firstImage.getHeight(), secondImag.getHeight());
 
-    Image* img = new Image(maxWidth, maxHeight);
+    Image img(maxWidth, maxHeight);
 
     for (int i = 0; i < firstImage.getWidth(); i++)
     {
         for (int j = 0; j < firstImage.getHeight(); j++)
         {
             Color firstColor = firstImage(i, j);
-            (*img)(i, j) = firstColor;
+            img(i, j) = firstColor;
         }
     }
 
@@ -42,11 +42,12 @@ Image Image::mergeImages(const Image& firstImage, const Image& secondImag)
         for (int j = 0; j < secondImag.getHeight(); j++)
         {
             const Color secondColor = secondImag(i, j);
-            (*img)(i, j) = secondColor;
+            img(i, j) = secondColor;
         }
     }
-    return *(img);
+    return img;
 }
+    
 
 Image::Image(int width, int height, const Color& background) : m_imageDimensions({width, height})
 {
@@ -68,7 +69,22 @@ Image::Image(Image&& other) noexcept
 {
     // It is not necessary to reset the other object, but the author of this code
     // prefers to do so to make it clear that the object is in a moved-from state.
+    other.m_imageDimensions = sizei2d{0, 0};
     other.m_colorPalette.reset();
+}
+
+Image& Image::operator=(Image&& other) noexcept
+{
+    if (this != &other)
+    {
+        m_imageDimensions = other.m_imageDimensions;
+        m_pixels = std::move(other.m_pixels);
+        m_colorPalette = std::move(other.m_colorPalette);
+        
+        other.m_imageDimensions = sizei2d{0, 0};
+        other.m_colorPalette.reset();
+    }
+    return *this;
 }
 
 bool Image::operator==(const Image& other) const
@@ -280,5 +296,4 @@ bool Image::save(const std::string& filePath) const
     PNG png(*this);
     return png.save(filePath);
 }
-
 } // namespace pixelmancy
