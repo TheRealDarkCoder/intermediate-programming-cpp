@@ -23,6 +23,7 @@ void Gif::close()
     if (pGIF)
     {
         cgif_close(pGIF);
+        pGIF = nullptr;
     }
     m_localToGlobalMappings.clear();
 }
@@ -162,6 +163,11 @@ void Gif::loadFrames()
         std::vector<uint8_t> imageDataVec(static_cast<std::size_t>(_width * _height));
 
         const std::vector<uint8_t>& frameData = frame.image.getImageData();
+        if (frameIndex >= m_localToGlobalMappings.size())
+        {
+            P_LOG_ERROR() << "ERROR: Missing color mapping for frame " << frameIndex << "\n";
+            continue; // or return if critical
+        }
         IndexMapPtr& localToGlobalColorMap = m_localToGlobalMappings[frameIndex];
 
         // load frame data to imageDataVec

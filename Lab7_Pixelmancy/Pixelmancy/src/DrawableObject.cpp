@@ -35,7 +35,7 @@ void DrawableObject::drawOn(Image& image) const
 
 ObjectType DrawableObject::getObjectType() const
 {
-    return ObjectType::CIRCLE;
+    return ObjectType::UNKNOWN;
 }
 
 } // namespace pixelmancy::graphics

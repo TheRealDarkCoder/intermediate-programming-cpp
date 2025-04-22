@@ -7,7 +7,7 @@ namespace pixelmancy::graphics {
 CircleObject::CircleObject(int radius, int outlineWidth, const Color& fillColor, const Color& outlineColor)
  : FilledShape(fillColor, outlineColor, outlineWidth), m_radius(radius)
 {
-    m_position = {m_radius - 1, m_radius - 1};
+
 }
 
 void CircleObject::drawOn(Image& image) const
@@ -59,6 +59,11 @@ void CircleObject::drawOn(Image& image) const
             }
         }
     }
+}
+
+ObjectType CircleObject::getObjectType() const
+{
+    return ObjectType::CIRCLE;
 }
 
 } // namespace pixelmancy::graphics
