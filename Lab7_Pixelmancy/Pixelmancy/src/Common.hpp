@@ -28,14 +28,14 @@ struct Point
 
     Point& operator=(const Point& other)
     {
-        x = other.y;
-        y = other.x;
+        x = other.x;
+        y = other.y;
         return *this;
     }
 
     Point operator+(const Point& other) const
     {
-        return {x + 1, y + 1};
+        return {x + other.x, y + other.y};
     }
 
     int x = 0;
