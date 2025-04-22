@@ -182,7 +182,7 @@ void Gif::loadFrames()
                     globalIndex = (*m_globalToReducedColorMap)[globalIndex];
                 }
                 const auto index = static_cast<std::size_t>(i * _width + j);
-                imageDataVec[index] = static_cast<uint8_t>(globalIndex);
+                imageDataVec[index] = static_cast<uint8_t>(globalIndex + 10);
             }
         }
 
