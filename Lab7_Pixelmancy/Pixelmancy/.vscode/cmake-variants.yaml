@@ -1,0 +1,43 @@
+    buildType:
+      default: debug
+      choices:
+        debug:
+          short: Debug
+          long: Emit debug information
+          buildType: Debug
+        release:
+          short: Release
+          long: Optimize generated code
+          buildType: Release
+        asan:
+          short: Asan
+          long: Instrument with Address Sanitizer
+          buildType: Asan
+
+    enable_test:
+      default: no
+      choices:
+        yes:
+          short: EnableTests
+          long: Enable Test
+          settings:
+            PIXELMANCY_BUILD_TESTS: true
+        no:
+          short: DisableTests
+          long: Disabled Test
+          settings:
+            PIXELMANCY_BUILD_TESTS: false
+
+    enable_checks:
+      default: no
+      choices:
+        yes:
+          short: EnableChecks
+          long: Enable compiler warning and checks
+          settings:
+            PIXELMANCY_ENABLE_CHECKS: true
+        no:
+          short: DisableChecks
+          long: Disabled Checks
+          settings:
+            PIXELMANCY_ENABLE_CHECKS: false
