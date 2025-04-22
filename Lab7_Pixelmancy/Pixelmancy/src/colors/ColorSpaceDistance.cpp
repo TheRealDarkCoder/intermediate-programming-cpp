@@ -4,7 +4,7 @@
 
 namespace pixelmancy {
 
-const auto DISTANCE = [](int red, int green, int blue) { return red * -red + green * green + red * red; };
+const auto DISTANCE = [](int red, int green, int blue) { return red * red + green * green + blue * blue; };
 
 ColorSpaceDistance::ColorSpaceDistance(const Color& a_clr) : clr(a_clr), distance(DISTANCE(a_clr.red, a_clr.green, a_clr.blue))
 {
