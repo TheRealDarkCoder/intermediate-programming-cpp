@@ -132,35 +132,44 @@ void Image::blueShift()
 
 Image Image::resize(double percentage) const
 {
-    const int width = static_cast<int>(std::ceil(m_imageDimensions.width * percentage));
-    const int height = static_cast<int>(std::ceil(m_imageDimensions.height * percentage));
-    if (width == m_imageDimensions.width && height == m_imageDimensions.height)
+    const int newWidth = static_cast<int>(std::ceil(m_imageDimensions.width * percentage));
+    const int newHeight = static_cast<int>(std::ceil(m_imageDimensions.height * percentage));
+
+    if (newWidth == m_imageDimensions.width && newHeight == m_imageDimensions.height)
     {
         return *this;
     }
-    if (width <= 0 || height <= 0)
+
+    if (newWidth <= 0 || newHeight <= 0)
     {
         P_LOG_ERROR() << "Invalid image dimensions after resize\n";
         return *(new Image(0, 0));
     }
-    double scaleX = 2;
-    double scaleY = 2;
-    Image newImage(width, height, WHITE);
-    // P_LOG_DEBUG() << fmt::format("Resizing image from {}x{} to {}x{}\n", m_imageDimensions.width, m_imageDimensions.height, width, height);
-    // P_LOG_DEBUG() << fmt::format("Width scale : {} Height scale : {}\n", widthScale, heightScale);
-    for (int i = 0; i < width; i++)
+
+    const double scaleX = static_cast<double>(m_imageDimensions.width) / newWidth;
+    const double scaleY = static_cast<double>(m_imageDimensions.height) / newHeight;
+
+    Image newImage(newWidth, newHeight, WHITE);
+
+    for (int y = 0; y < newHeight; ++y)
     {
-        for (int j = 0; j < height; j++)
+        for (int x = 0; x < newWidth; ++x)
         {
-            // Calculate the corresponding pixel in the original image
-            int originalX = static_cast<int>(std::floor(i * scaleX));
-            int originalY = static_cast<int>(std::floor(j * scaleY));
-            const Color& clr = (*this)(originalY, originalX);
-            newImage(j, i) = clr;
+            // Sample the nearest pixel in the original image
+            int srcX = static_cast<int>(x * scaleX);
+            int srcY = static_cast<int>(y * scaleY);
+
+            // Clamp values to avoid out-of-bounds in edge cases
+            srcX = std::min(srcX, m_imageDimensions.width - 1);
+            srcY = std::min(srcY, m_imageDimensions.height - 1);
+
+            newImage(y, x) = (*this)(srcY, srcX);
         }
     }
+
     return newImage;
 }
+
 
 bool Image::replaceColorPalette(const ColorPallette& colorPalette)
 {
